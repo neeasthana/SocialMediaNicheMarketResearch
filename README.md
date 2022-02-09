@@ -38,7 +38,7 @@ command to run if program contains helper info
 
 ## Authors
 
-Neeraj Asthana, Richard ("Dick") Kemp
+Neeraj (Assface) Asthana, Richard ("Dick") Kemp
 
 ## Version History
 
