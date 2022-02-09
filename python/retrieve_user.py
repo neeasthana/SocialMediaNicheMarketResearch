@@ -1,6 +1,7 @@
 import requests
 import browser_cookie3
 from bs4 import BeautifulSoup
+import json
 
 HEADERS = {
     "User-Agent" : "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
@@ -50,7 +51,14 @@ class InstagramAcccount(Account):
         return browser_cookie3.chrome(domain_name='.instagram.com')
 
     def get_recent_posts(self):
-        print (self.parsed_homepage.prettify())
+
+        body = self.parsed_homepage.body.findAll('script', type="text/javascript")[0]
+
+        json_raw = body.split("window._sharedData = ")[1].replace(';\n</script>','')
+        
+        json_parsed = json.loads(json_raw)
+
+        print (json_parsed)
 
 account = InstagramAcccount("mindmatterswithdiv")
 account.get_recent_posts()
