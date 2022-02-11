@@ -89,8 +89,15 @@ class InstagramPost:
         self._parsePostJson(post_json)
 
     def _parsePostJson(self, post_json):
-        pass
+        node = post_json['node']
+
+        self.type = node['__typename']
+        self.identifier = node['id']
+        self.url = node['display_url']
+        self.comments = node['edge_media_to_comment']['count']
+        self.likes = node['edge_liked_by']['count']
+        self.post_time = node['taken_at_timestamp']
 
 
 account = InstagramAcccount("mindmatterswithdiv")
-account.get_recent_posts()
+print(account.get_recent_posts()[1].post_json)
