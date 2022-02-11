@@ -46,23 +46,30 @@ class InstagramAcccount(Account):
         super().__init__(username, INSTAGRAM)
         self.username = username
         self.parsed_homepage = self._retreive_parsed_profile_page()
+        self.posts = self._parse_posts()
 
     def _browser_cookies(self):
         return browser_cookie3.chrome(domain_name='.instagram.com')
 
-    def get_recent_posts(self):
+    def _parse_posts(self):
         profile = self._get_profile_json()
 
         posts_metadata = profile['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']
 
-        posts = posts_metadata['edges']
+        posts_json_list = posts_metadata['edges']
 
         print("Count = " + str(posts_metadata['count']))
-        print(str(posts))
+        
+        posts = []
+
+        for post_json in posts_json_list:
+            post = InstagramPost(post_json)
+            posts.append(post)
 
         return posts
 
-
+    def get_recent_posts(self, count = 10):
+        return self.posts
 
     def _get_profile_json(self):
 
@@ -73,6 +80,17 @@ class InstagramAcccount(Account):
         json_parsed = json.loads(json_raw)
 
         return json_parsed
+
+
+
+class InstagramPost:
+    def __init__(self, post_json):
+        self.post_json = post_json
+        self._parsePostJson(post_json)
+
+    def _parsePostJson(self, post_json):
+        pass
+
 
 account = InstagramAcccount("mindmatterswithdiv")
 account.get_recent_posts()
