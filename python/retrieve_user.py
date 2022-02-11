@@ -98,6 +98,20 @@ class InstagramPost:
         self.likes = node['edge_liked_by']['count']
         self.post_time = node['taken_at_timestamp']
 
+    def toString(self):
+        string = (
+            "Id: " + str(self.identifier) + "\n"
+            "Media Type: " + str(self.type) + "\n"
+            "Url: " + str(self.url) + "\n"
+            "Post Time: " + str(self.post_time) + "\n"
+            "Comments: " + str(self.comments) + "\n"
+            "Likes: " + str(self.likes) + "\n"
+        )
+
+        return string
+
 
 account = InstagramAcccount("mindmatterswithdiv")
-print(account.get_recent_posts()[1].post_json)
+
+for a in account.get_recent_posts():
+    print(a.toString() + "\n\n")
