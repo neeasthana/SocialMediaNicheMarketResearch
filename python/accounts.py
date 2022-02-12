@@ -40,7 +40,7 @@ class Account:
 
 INSTAGRAM = "instagram"
 
-class InstagramAcccount(Account):
+class InstagramAccount(Account):
 
     def __init__(self, username):
         super().__init__(username, INSTAGRAM)
@@ -59,8 +59,6 @@ class InstagramAcccount(Account):
         posts_metadata = profile['entry_data']['ProfilePage'][0]['graphql']['user']['edge_owner_to_timeline_media']
 
         posts_json_list = posts_metadata['edges']
-
-        print("Count = " + str(posts_metadata['count']))
         
         posts = []
 
@@ -112,9 +110,3 @@ class InstagramPost:
             "Likes: " + str(self.likes) + "\n"
         )
         return string
-
-
-account = InstagramAcccount("cryptocasey")
-
-for a in account.get_recent_posts():
-    print(a.toString() + "\n\n")
