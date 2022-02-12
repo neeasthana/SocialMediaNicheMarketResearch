@@ -48,8 +48,10 @@ class InstagramAcccount(Account):
         self.parsed_homepage = self._retreive_parsed_profile_page()
         self.posts = self._parse_posts()
 
+
     def _browser_cookies(self):
         return browser_cookie3.chrome(domain_name='.instagram.com')
+
 
     def _parse_posts(self):
         profile = self._get_profile_json()
@@ -68,11 +70,12 @@ class InstagramAcccount(Account):
 
         return posts
 
+
     def get_recent_posts(self, count = 10):
         return self.posts
 
-    def _get_profile_json(self):
 
+    def _get_profile_json(self):
         body = self.parsed_homepage.find('body').findAll('script', type="text/javascript")[0]
 
         json_raw = str(body).split("window._sharedData = ")[1].replace(';</script>','')
@@ -88,15 +91,16 @@ class InstagramPost:
         self.post_json = post_json
         self._parsePostJson(post_json)
 
+
     def _parsePostJson(self, post_json):
         node = post_json['node']
-
         self.type = node['__typename']
         self.identifier = node['id']
         self.url = node['display_url']
         self.comments = node['edge_media_to_comment']['count']
         self.likes = node['edge_liked_by']['count']
         self.post_time = node['taken_at_timestamp']
+
 
     def toString(self):
         string = (
@@ -107,11 +111,10 @@ class InstagramPost:
             "Comments: " + str(self.comments) + "\n"
             "Likes: " + str(self.likes) + "\n"
         )
-
         return string
 
 
-account = InstagramAcccount("mindmatterswithdiv")
+account = InstagramAcccount("cryptocasey")
 
 for a in account.get_recent_posts():
     print(a.toString() + "\n\n")
