@@ -1,5 +1,6 @@
 import requests
 import browser_cookie3
+import time
 
 class URLRetriever:
     def retrieve(self, url, cookies = None, headers = {}, timeout = 3):
@@ -35,8 +36,9 @@ class CachedHTMLRetriever(HTMLRetriever):
     ONE_DAY = TWENTY_FOUR_HOURS * SIXTY_MINUTES * SIXTY_SECONDS;
 
     def __init__(self, seconds_til_expiration = ONE_DAY):
-        last_accessed = self._get_last_access_map()
-        html_cache = self._get_html_cache()
+        self.seconds_til_expiration = seconds_til_expiration
+        self.last_accessed = self._get_last_access_map()
+        self.html_cache = self._get_html_cache()
 
 
     def _get_last_access_map(self):
@@ -48,13 +50,24 @@ class CachedHTMLRetriever(HTMLRetriever):
 
 
     def retrieve(self, url):
-        # if self._in_cache(url) and self._is_not_expired(url):
-        #     return self._get_html_cache[url]
-        # else:
-        response = super().retrieve(url)
-        # self._add_to_cache(url, response)
-        return response
+        if url in self.html_cache and self._is_not_expired(url):
+            return self._get_html_cache[url]
+        else:
+            response = super().retrieve(url)
+            self._add_to_cache(url, response)
+            return response
 
+
+    def _add_to_cache(self, url, response):
+        self.html_cache[url] = response
+        self.last_accessed[url] = time.time()
+
+
+    def _is_not_expired(self, url):
+        now = time.time()
+        then = self.last_accessed[url]
+        difference = now - then
+        return difference > self.seconds_til_expiration
 
 
 
