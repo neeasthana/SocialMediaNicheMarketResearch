@@ -1,5 +1,4 @@
-import requests
-import browser_cookie3
+from retriever import HTMLRetriever
 from bs4 import BeautifulSoup
 import json
 
@@ -20,16 +19,9 @@ class Account:
 
 
     def _retreive_parsed_profile_page(self):
-        response = self._retreive_profile_page()
-        return BeautifulSoup(response.text, 'html.parser')
-
-
-    def _retreive_profile_page(self):
         url = self._generate_account_url()
-        cookies = self._browser_cookies()
-        response = requests.get(url, verify=False, headers=HEADERS, cookies=cookies, timeout=3)
-
-        return response
+        response = HTMLRetriever().retrieve(url)
+        return BeautifulSoup(response, 'html.parser')
 
 
     def _generate_account_url(self):
