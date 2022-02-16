@@ -22,13 +22,44 @@ class HTMLRetriever(URLRetriever):
         browser_cookies = HTMLRetriever._browser_cookies()
         return super().retrieve(url, cookies = browser_cookies, headers = BROWSER_HEADERS)
 
+
     def _browser_cookies(domain = '.instagram.com'):
         return browser_cookie3.chrome(domain_name = domain)
 
 
 
+class CachedHTMLRetriever(HTMLRetriever):
+    SIXTY_SECONDS = 60
+    SIXTY_MINUTES = 60
+    TWENTY_FOUR_HOURS = 24
+    ONE_DAY = TWENTY_FOUR_HOURS * SIXTY_MINUTES * SIXTY_SECONDS;
+
+    def __init__(self, seconds_til_expiration = ONE_DAY):
+        last_accessed = self._get_last_access_map()
+        html_cache = self._get_html_cache()
+
+
+    def _get_last_access_map(self):
+        return {}
+
+
+    def _get_html_cache(self):
+        return {}
+
+
+    def retrieve(self, url):
+        # if self._in_cache(url) and self._is_not_expired(url):
+        #     return self._get_html_cache[url]
+        # else:
+        response = super().retrieve(url)
+        # self._add_to_cache(url, response)
+        return response
+
+
+
+
 if __name__ == "__main__":
-    retriever = HTMLRetriever()
+    retriever = CachedHTMLRetriever()
     response = retriever.retrieve("https://www.instagram.com/selfcare4yu/")
 
     print(str(response))
