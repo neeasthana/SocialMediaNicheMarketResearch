@@ -1,4 +1,4 @@
-from retriever import HTMLRetriever
+from retriever import HTMLRetriever, CachedHTMLRetriever
 from bs4 import BeautifulSoup
 import json
 
@@ -12,6 +12,8 @@ HEADERS = {
 }
 
 
+retriever = CachedHTMLRetriever()
+
 class Account:
     def __init__(self, identifier, sitename):
         self.identifier = identifier
@@ -20,7 +22,7 @@ class Account:
 
     def _retreive_parsed_profile_page(self):
         url = self._generate_account_url()
-        response = HTMLRetriever().retrieve(url)
+        response = retriever.retrieve(url)
         return BeautifulSoup(response, 'html.parser')
 
 
