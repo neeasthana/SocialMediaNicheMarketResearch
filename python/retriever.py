@@ -83,7 +83,7 @@ class CachedHTMLRetriever(HTMLRetriever):
 
     def retrieve(self, url):
         if url in self.html_cache and self._is_not_expired(url):
-            return self._get_html_cache[url]
+            return self.html_cache[url]
         else:
             response = super().retrieve(url)
             self._add_to_cache(url, response)
@@ -93,16 +93,31 @@ class CachedHTMLRetriever(HTMLRetriever):
     def _add_to_cache(self, url, response):
         self.html_cache[url] = response
         self.last_accessed[url] = time.time()
+        self._refresh_cache()
+
+
+    def _refresh_cache(self):
+        dirname = os.path.dirname(__file__)
+        last_accessed_path = os.path.join(dirname, '.cache/last_accessed_map.txt')
+        html_cache_path = os.path.join(dirname, '.cache/html_cache_map.txt')
+
+        with open(last_accessed_path, "wb") as f:
+            pickle.dump(self.last_accessed, f)
+
+        with open(html_cache_path, "wb") as f:
+            pickle.dump(self.html_cache, f)
 
 
     def _is_not_expired(self, url):
         now = time.time()
         then = self.last_accessed[url]
         difference = now - then
-        return difference > self.seconds_til_expiration
+        return difference < self.seconds_til_expiration
 
 
 
 if __name__ == "__main__":
     retriever = CachedHTMLRetriever()
     response = retriever.retrieve("https://www.instagram.com/selfcare4yu/")
+
+    print(response)
