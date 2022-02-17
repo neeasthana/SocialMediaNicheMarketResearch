@@ -2,6 +2,7 @@ import requests
 import browser_cookie3
 import time
 import os
+import pickle
 
 class URLRetriever:
     def retrieve(self, url, cookies = None, headers = {}, timeout = 3):
@@ -54,14 +55,30 @@ class CachedHTMLRetriever(HTMLRetriever):
         dirname = os.path.dirname(__file__)
         path = os.path.join(dirname, '.cache/last_accessed_map.txt')
 
-        return {}
+        if not os.path.exists(path):
+            with open(path, "wb") as f:
+                pickle.dump({}, f)
+
+        with open(path, "rb") as f:
+            try:
+                return pickle.load(f)
+            except EOFError:
+                return {}
 
 
     def _get_html_cache(self):
         dirname = os.path.dirname(__file__)
         path = os.path.join(dirname, '.cache/html_cache_map.txt')
 
-        return {}
+        if not os.path.exists(path):
+            with open(path, "wb") as f:
+                pickle.dump({}, f)
+
+        with open(path, "rb") as f:
+            try:
+                return pickle.load(f)
+            except EOFError:
+                return {}
 
 
     def retrieve(self, url):
@@ -89,5 +106,3 @@ class CachedHTMLRetriever(HTMLRetriever):
 if __name__ == "__main__":
     retriever = CachedHTMLRetriever()
     response = retriever.retrieve("https://www.instagram.com/selfcare4yu/")
-
-    print(str(response))
