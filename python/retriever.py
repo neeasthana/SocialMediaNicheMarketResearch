@@ -1,6 +1,7 @@
 import requests
 import browser_cookie3
 import time
+import os
 
 class URLRetriever:
     def retrieve(self, url, cookies = None, headers = {}, timeout = 3):
@@ -37,15 +38,29 @@ class CachedHTMLRetriever(HTMLRetriever):
 
     def __init__(self, seconds_til_expiration = ONE_DAY):
         self.seconds_til_expiration = seconds_til_expiration
+        self._create_cache_folder()
         self.last_accessed = self._get_last_access_map()
         self.html_cache = self._get_html_cache()
 
 
+    def _create_cache_folder(self):
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '.cache')
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+
     def _get_last_access_map(self):
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '.cache/last_accessed_map.txt')
+
         return {}
 
 
     def _get_html_cache(self):
+        dirname = os.path.dirname(__file__)
+        path = os.path.join(dirname, '.cache/html_cache_map.txt')
+
         return {}
 
 
