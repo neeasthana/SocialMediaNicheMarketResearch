@@ -123,3 +123,9 @@ class InstagramPost:
             "Likes: " + str(self.likes) + "\n"
         )
         return string
+
+
+if __name__ == "__main__":
+    account = InstagramAccount("koberdoodle")
+
+    account.get_most_engaged_content()
