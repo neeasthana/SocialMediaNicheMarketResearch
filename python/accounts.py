@@ -67,6 +67,25 @@ class InstagramAccount(Account):
         return self.posts
 
 
+    def get_most_engaged_content(self, count = 3):
+        posts = self.get_recent_posts()  # [ InstagramPost... ]
+        most_engaged_post = None
+
+        # For Ricky to fill in:
+        # Get the most engaged upon content
+
+        # third_post = posts[2]
+
+        # third_post.likes
+        # third_post.comments
+
+        print(most_engaged_post)
+
+        return most_engaged_post
+
+
+
+
     def _get_profile_json(self):
         body = self.parsed_homepage.find('body').findAll('script', type="text/javascript")[0]
 

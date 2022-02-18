@@ -30,4 +30,8 @@ class CustomerProfile:
 if __name__ == "__main__":
     user = User("Kobe the GoldenDoodle")
     customer = CustomerProfile(user, "mindmatterswithdiv")
-    customer.follow_instagram_accounts("mindmatterswithdiv", "curly_therapist", "selfcare4yu")
+    customer.follow_instagram_accounts("koberdoodle", "mindmatterswithdiv", "curly_therapist", "selfcare4yu")
+
+    for post in customer.follwing_accounts[0].get_recent_posts():
+        print(post.toString())
+        print("")
