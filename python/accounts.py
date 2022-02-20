@@ -40,6 +40,7 @@ class InstagramAccount(Account):
         super().__init__(username, INSTAGRAM)
         self.username = username
         self.parsed_homepage = self._retreive_parsed_profile_page()
+        self.followers = self._parse_number_of_followers()
         self.posts = self._parse_posts()
 
 
@@ -84,8 +85,6 @@ class InstagramAccount(Account):
         return most_engaged_post
 
 
-
-
     def _get_profile_json(self):
         body = self.parsed_homepage.find('body').findAll('script', type="text/javascript")[0]
 
@@ -94,6 +93,14 @@ class InstagramAccount(Account):
         json_parsed = json.loads(json_raw)
 
         return json_parsed
+
+
+    def _parse_number_of_followers(self):
+        profile = self._get_profile_json()
+
+        number_of_followers = profile['entry_data']['ProfilePage'][0]['graphql']['user']["edge_followed_by"]["count"]
+
+        return number_of_followers
 
 
 
@@ -127,5 +134,7 @@ class InstagramPost:
 
 if __name__ == "__main__":
     account = InstagramAccount("koberdoodle")
+
+    print(account.followers)
 
     account.get_most_engaged_content()
