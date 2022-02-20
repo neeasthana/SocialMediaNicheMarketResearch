@@ -68,6 +68,14 @@ class InstagramAccount(Account):
         return self.posts
 
 
+    def get_most_liked_post(self):
+        most_liked = self.posts[0]
+        for post in self.posts:
+            if post.likes > most_liked.likes:
+                most_liked = post
+        return most_liked
+
+
     def get_most_engaged_content(self, count = 3):
         posts = self.get_recent_posts()  # [ InstagramPost... ]
         most_engaged_post = None
@@ -135,6 +143,6 @@ class InstagramPost:
 if __name__ == "__main__":
     account = InstagramAccount("koberdoodle")
 
-    print(account.followers)
+    print(account.get_most_liked_post().toString())
 
     account.get_most_engaged_content()
