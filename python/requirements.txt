@@ -1,0 +1,3 @@
+requests==2.18.4
+browser-cookie3==0.13.0
+beautifulsoup4==4.6.0

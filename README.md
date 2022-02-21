@@ -18,8 +18,8 @@ The following repository contains tools to aid creators and influencers to disco
 
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+Install Python Dependencies: `pip3 install -r python/requirements.txt`
+
 
 ### Executing program
 
