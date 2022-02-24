@@ -24,6 +24,11 @@ class HtmlGenerator:
         )
 
 
+    def save(self, filename = "report.html"):
+        with open(filename, "w") as f:
+            f.write(str(self.html))
+
+
 
 class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
     def __init__(self, profile: CustomerProfile):
@@ -39,7 +44,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             header = h2(account.username)
             likes = h3("Likes: " + str(post.likes))
             comments = h3("Comments: " + str(post.comments))
-            image = img(src=post.url)
+            image = img(src=post.url, alt = "a post picture", crossorigin="anonymous")
             body.appendChild(header)
             body.appendChild(likes)
             body.appendChild(comments)
@@ -57,4 +62,4 @@ if __name__ == "__main__":
 
     render = TopPostsCustomerProfileHtmlGenerator(customer)
 
-    print(render.html)
+    render.save()
