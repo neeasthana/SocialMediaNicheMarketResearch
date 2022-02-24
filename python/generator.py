@@ -58,7 +58,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
 if __name__ == "__main__":
     user = User("Kobe the GoldenDoodle")
     customer = CustomerProfile(user, "mindmatterswithdiv")
-    customer.follow_instagram_accounts("koberdoodle", "mindmatterswithdiv", "curly_therapist", "selfcare4yu")
+    customer.follow_instagram_accounts("koberdoodle", "mindmatterswithdiv", "curly_therapist", "selfcare4yu", "oregonfootball")
 
     render = TopPostsCustomerProfileHtmlGenerator(customer)
 
