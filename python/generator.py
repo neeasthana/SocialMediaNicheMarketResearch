@@ -30,6 +30,25 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         super().__init__(profile)
 
 
+    def get_body(self):
+        body = super().get_body()
+
+        most_liked_posts = [(account, account.get_most_liked_post()) for account in self.profile.follwing_accounts]
+
+        for account, post in most_liked_posts:
+            header = h2(account.username)
+            likes = h3("Likes: " + str(post.likes))
+            comments = h3("Comments: " + str(post.comments))
+            image = img(src=post.url)
+            body.appendChild(header)
+            body.appendChild(likes)
+            body.appendChild(comments)
+            body.appendChild(image)
+
+        return body
+
+
+
 
 if __name__ == "__main__":
     user = User("Kobe the GoldenDoodle")
