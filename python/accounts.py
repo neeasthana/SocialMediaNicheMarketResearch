@@ -158,18 +158,21 @@ class InstagramPost:
         self.comments = node['edge_media_to_comment']['count']
         self.likes = node['edge_liked_by']['count']
         self.post_time = node['taken_at_timestamp']
+        self.caption = node['edge_media_to_caption']['edges'][0]['node']['text']
 
 
     def toString(self):
         string = (
             "Id: " + str(self.identifier) + "\n"
             "Media Type: " + str(self.type) + "\n"
+            "Caption: " + str(self.caption) + "\n"
             "Url: " + str(self.url) + "\n"
             "Post Time: " + str(self.post_time) + "\n"
             "Comments: " + str(self.comments) + "\n"
             "Likes: " + str(self.likes) + "\n"
         )
         return string
+
 
 
 if __name__ == "__main__":
