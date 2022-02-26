@@ -40,7 +40,7 @@ class InstagramAccount(Account):
         super().__init__(username, INSTAGRAM)
         self.username = username
         self.parsed_homepage = self._retreive_parsed_profile_page()
-        self.followers = self._parse_number_of_followers()
+        self.profile = InstagramProfileInfo(self._get_profile_json())
         self.posts = self._parse_posts()
 
 
@@ -119,6 +119,30 @@ class InstagramAccount(Account):
         return number_of_followers
 
 
+class InstagramProfileInfo:
+    def __init__(self, profile_json):
+        user = profile_json['entry_data']['ProfilePage'][0]['graphql']['user']
+
+        self.followers = user["edge_followed_by"]["count"]
+        self.following = user["edge_follow"]["count"]
+        self.profile_pic = user["profile_pic_url"]
+        self.username = user["username"]
+        self.identifier = user["id"]
+        self.is_private = user["is_private"]
+
+    def toString(self):
+        string = (
+            "Id: " + str(self.identifier) + "\n"
+            "Username: " + str(self.username) + "\n"
+            "Profile Pic: " + str(self.profile_pic) + "\n"
+            "Followers: " + str(self.followers) + "\n"
+            "Following: " + str(self.following) + "\n"
+            "Is Private: " + str(self.is_private) + "\n"
+        )
+        return string
+
+
+
 
 class InstagramPost:
     def __init__(self, post_json):
@@ -150,6 +174,8 @@ class InstagramPost:
 
 if __name__ == "__main__":
     account = InstagramAccount("koberdoodle")
+
+    print(account.profile.toString())
 
     print(account.get_most_commented_post().toString())
 
