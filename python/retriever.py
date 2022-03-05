@@ -5,9 +5,50 @@ import os
 import pickle
 
 class URLRetriever:
-    def retrieve(self, url, cookies = None, headers = {}, timeout = 3):
+    def retrieve(self, url, cookies = None, headers = {}, timeout = 3, stream = false):
         response = requests.get(url, verify=False, headers=headers, cookies=cookies, timeout=timeout)
-        return response.text
+        return response
+
+
+class ContentRetriever(URLRetriever):
+    def retrieve(self, url):
+        response = super().retrieve(url, cookies = None, stream = true)
+        return response
+
+
+
+class FileCachedRetriever(ContentRetriever):
+    def __init__(self, cache_location = os.path.join(os.path.dirname(__file__), '.cache')):
+        self.cache_location = cache_location
+        self._create_cache_folder()
+
+
+    def _create_cache_folder(self):
+        path = self.cache_location
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+
+    def url_to_filename(url):
+        return url.split("?")[0].replace("https://", "").split("/")[-1]
+
+
+    def retrieve(self, url):
+        filename = FileCachedRetriever.url_to_filename(url)
+        path = os.path.join(self.cache_location, filename)
+        file_exists = os.path.isfile(path)
+
+        if not file_exists:
+            with open(path, 'wb') as handle:
+                response = super().retrieve(url)
+                if not response.ok:
+                    raise("Response was not a success: " + str(response))
+                for block in response.iter_content(1024):
+                    if not block:
+                        break
+                    handle.write(block)
+
+        return filename
 
 
 
@@ -23,7 +64,7 @@ BROWSER_HEADERS = {
 class HTMLRetriever(URLRetriever):
     def retrieve(self, url):
         browser_cookies = HTMLRetriever._browser_cookies()
-        return super().retrieve(url, cookies = browser_cookies, headers = BROWSER_HEADERS)
+        return super().retrieve(url, cookies = browser_cookies, headers = BROWSER_HEADERS).text
 
 
     def _browser_cookies(domain = '.instagram.com'):
