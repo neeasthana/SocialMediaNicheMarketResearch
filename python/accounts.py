@@ -84,10 +84,13 @@ class InstagramAccount(Account):
         return most_commented
 
 
-    def get_most_engaged_content(self, count = 3):
+    def get_most_engaged_content(self):
         posts = self.get_recent_posts()  # [ InstagramPost... ]
-        most_engaged_post = None
+        most_engaged_posts = self.posts  # grabbing all posts right now - for RK to edit 
+        first_post = most_engaged_posts[0]
+        first_post.comments
 
+        print(first_post.comments)
         # For Ricky to fill in:
         # Get the most engaged upon content
 
@@ -177,6 +180,8 @@ class InstagramPost:
 
 if __name__ == "__main__":
     account = InstagramAccount("koberdoodle")
+
+    account2 = InstagramAccount("oregonfootball")
 
     print(account.profile.toString())
 
