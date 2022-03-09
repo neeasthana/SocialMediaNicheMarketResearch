@@ -3,9 +3,15 @@ from accounts import InstagramAccount
 # Represents video/photo content metadata
 class InstagramContent:
     def __init__(self, post_json):
-        node = post_json['node']
-        self.display_url = node['display_url']
-        self.type = node['__typename']
+        self.post_json = post_json
+        self.node = post_json['node']
+        self._parse()
+
+
+    def _parse(self):
+        self.display_url = self.node['display_url']
+        self.type = self.node['__typename']
+
 
 
     def content_url(self):
@@ -28,21 +34,32 @@ class InstagramVideoContent(InstagramContent):
         super().__init__(post_json)
 
 
+    def _parse(self):
+        super()._parse()
+        self.video_url = self.node['video_url']
+        self.views = self.node['video_view_count']
+
+
 
 class InstagramPhotoContent(InstagramContent):
     def __init__(self, post_json):
         super().__init__(post_json)
 
 
+    def _parse(self):
+        super()._parse()
+        self.photo_url = self.node['thumbnail_src']
+
+
 
 if __name__ == "__main__":
-    account = InstagramAccount("koberdoodle")
+    a = InstagramAccount("koberdoodle")
 
-    print(account.profile.toString())
+    print(a.profile.toString())
 
-    print(account.get_most_commented_post().toString())
+    print(a.get_most_commented_post().toString())
 
-    post = account.get_most_liked_post()
+    post = a.get_most_liked_post()
 
     content = InstagramContent.create(post.post_json)
 
