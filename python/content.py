@@ -1,4 +1,4 @@
-from accounts import InstagramAccount
+from accounts import *
 
 # Represents video/photo content metadata
 class InstagramContent:
@@ -41,6 +41,10 @@ class InstagramVideoContent(InstagramContent):
         self.views = self.node['video_view_count']
 
 
+    def content_url(self):
+        return self.video_url
+
+
 
 class InstagramPhotoContent(InstagramContent):
     def __init__(self, post_json):
@@ -50,6 +54,10 @@ class InstagramPhotoContent(InstagramContent):
     def _parse(self):
         super()._parse()
         self.photo_url = self.node['display_url']
+
+
+    def content_url(self):
+        return self.photo_url
 
 
 # Sidecars are posts with multiple pieces of content (multiple photos and videos)
@@ -62,6 +70,10 @@ class InstagramSidecarContent(InstagramContent):
         super()._parse()
         pieces_of_content = self.node["edge_sidecar_to_children"]["edges"]
         self.content_list = [InstagramContent.create(content) for content in pieces_of_content]
+
+
+    def content_urls(self):
+        return [content.display_url() for content in pieces_of_content]
 
 
 
