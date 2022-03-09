@@ -5,14 +5,14 @@ import os
 import pickle
 
 class URLRetriever:
-    def retrieve(self, url, cookies = None, headers = {}, timeout = 3, stream = false):
+    def retrieve(self, url, cookies = None, headers = {}, timeout = 3, stream = False):
         response = requests.get(url, verify=False, headers=headers, cookies=cookies, timeout=timeout)
         return response
 
 
 class ContentRetriever(URLRetriever):
     def retrieve(self, url):
-        response = super().retrieve(url, cookies = None, stream = true)
+        response = super().retrieve(url, cookies = None, stream = True)
         return response
 
 
