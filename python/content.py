@@ -14,7 +14,7 @@ class InstagramContent:
 
 
     def content_url(self):
-        return self.url
+        return self.display_url
 
 
     def create(post_json):

@@ -10,14 +10,8 @@ class URLRetriever:
         return response
 
 
-class ContentRetriever(URLRetriever):
-    def retrieve(self, url):
-        response = super().retrieve(url, cookies = None, stream = True)
-        return response
 
-
-
-class FileCachedRetriever(ContentRetriever):
+class FileCachedRetriever(URLRetriever):
     def __init__(self, cache_location = os.path.join(os.path.dirname(__file__), '.cache')):
         self.cache_location = cache_location
         self._create_cache_folder()
@@ -29,18 +23,13 @@ class FileCachedRetriever(ContentRetriever):
             os.mkdir(path)
 
 
-    def url_to_filename(url):
-        return url.split("?")[0].replace("https://", "").split("/")[-1]
-
-
-    def retrieve(self, url):
-        filename = FileCachedRetriever.url_to_filename(url)
+    def retrieve(self, filename, url, cookies = None, headers = {}, timeout = 3, stream = False):
         path = os.path.join(self.cache_location, filename)
         file_exists = os.path.isfile(path)
 
         if not file_exists:
             with open(path, 'wb') as handle:
-                response = super().retrieve(url)
+                response = super().retrieve(url, cookies = cookies, headers = headers, stream = stream)
                 if not response.ok:
                     raise("Response was not a success: " + str(response))
                 for block in response.iter_content(1024):
@@ -48,7 +37,29 @@ class FileCachedRetriever(ContentRetriever):
                         break
                     handle.write(block)
 
-        return filename
+                return response
+
+        return requests.Response()
+
+
+class ContentRetriever(FileCachedRetriever):
+    def __init__(self):
+        cache_location = os.path.join(os.path.dirname(__file__), '.cache/content')
+        super().__init__(cache_location)
+
+
+    def retrieve(self, url):
+        filename = ContentRetriever.url_to_filename(url)
+        response = super().retrieve(filename, url, stream = True)
+        return response
+
+
+    def url_to_filename(url):
+        return url.split("?")[0].replace("https://", "").split("/")[-1]
+
+
+    def file_location(self, url):
+        return os.path.join(self.cache_location, ContentRetriever.url_to_filename(url))
 
 
 

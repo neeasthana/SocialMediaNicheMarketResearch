@@ -1,8 +1,13 @@
 from domonic.html import *
 from customer import User, CustomerProfile
 from accounts import InstagramPost
+from retriever import ContentRetriever
 import os
 import requests
+
+
+retriever = ContentRetriever()
+
 
 class HtmlGenerator:
     def __init__(self, profile: CustomerProfile):
@@ -45,12 +50,13 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         most_liked_posts = [(account, account.get_most_liked_post()) for account in self.profile.follwing_accounts]
 
         for account, post in most_liked_posts:
-            download_instagram_image(post)
+            content_url = post.asset.content_url()
+            retriever.retrieve(content_url)
 
             header = h2(account.username)
             likes = h3("Likes: " + str(post.likes))
             comments = h3("Comments: " + str(post.comments))
-            image = img(src=instagram_post_cache_location(post))
+            image = img(src=retriever.file_location(content_url))
             body.appendChild(header)
             body.appendChild(likes)
             body.appendChild(comments)
@@ -95,7 +101,7 @@ def instagram_post_to_filename(post: InstagramPost):
 if __name__ == "__main__":
     user = User("Kobe the GoldenDoodle")
     customer = CustomerProfile(user, "mindmatterswithdiv")
-    customer.follow_instagram_accounts("koberdoodle", "mindmatterswithdiv", "curly_therapist", "selfcare4yu", "oregonfootball")
+    customer.follow_instagram_accounts("millennial.therapist", "holisticallygrace", "curly_therapist", "selfcare4yu", "thebraincoach")
 
     render = TopPostsCustomerProfileHtmlGenerator(customer)
 
