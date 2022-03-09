@@ -13,7 +13,6 @@ class InstagramContent:
         self.type = self.node['__typename']
 
 
-
     def content_url(self):
         return self.url
 
@@ -24,6 +23,8 @@ class InstagramContent:
             return InstagramPhotoContent(post_json)
         elif typename == "GraphVideo":
             return InstagramVideoContent(post_json)
+        elif typename == "GraphSidecar":
+            return InstagramSidecarContent(post_json)
         else:
             raise Exception("Unknown content type: " + typename)
 
@@ -48,12 +49,25 @@ class InstagramPhotoContent(InstagramContent):
 
     def _parse(self):
         super()._parse()
-        self.photo_url = self.node['thumbnail_src']
+        self.photo_url = self.node['display_url']
+
+
+# Sidecars are posts with multiple pieces of content (multiple photos and videos)
+class InstagramSidecarContent(InstagramContent):
+    def __init__(self, post_json):
+        super().__init__(post_json)
+        self.content_list = []
+
+    def _parse(self):
+        super()._parse()
+        pieces_of_content = self.node["edge_sidecar_to_children"]["edges"]
+        self.content_list = [InstagramContent.create(content) for content in pieces_of_content]
+
 
 
 
 if __name__ == "__main__":
-    a = InstagramAccount("koberdoodle")
+    a = InstagramAccount("mindmatterswithdiv")
 
     print(a.profile.toString())
 
