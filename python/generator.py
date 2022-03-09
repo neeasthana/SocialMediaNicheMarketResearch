@@ -2,6 +2,7 @@ from domonic.html import *
 from customer import User, CustomerProfile
 from accounts import InstagramPost
 from retriever import ContentRetriever
+from content import *
 import os
 import requests
 
@@ -50,19 +51,47 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         most_liked_posts = [(account, account.get_most_liked_post()) for account in self.profile.follwing_accounts]
 
         for account, post in most_liked_posts:
-            content_url = post.asset.content_url()
-            retriever.retrieve(content_url)
-
             header = h2(account.username)
             likes = h3("Likes: " + str(post.likes))
             comments = h3("Comments: " + str(post.comments))
-            image = img(src=retriever.file_location(content_url))
+            # image = img(src=retriever.file_location(content_url))
+
             body.appendChild(header)
             body.appendChild(likes)
             body.appendChild(comments)
-            body.appendChild(image)
+
+            [body.appendChild(content) for content in TopPostsCustomerProfileHtmlGenerator._rendered_content(post.asset)]
 
         return body
+
+
+    def _rendered_content(content):
+        result = []
+
+        if type(content) is InstagramVideoContent:
+            content_url = content.content_url()
+            retriever.retrieve(content_url)
+            html_video = video(type= "video/mp4", crossorigin="anonymous", src = retriever.file_location(content_url))
+            result.append(html_video)
+
+        elif type(content) is InstagramPhotoContent:
+            content_url = content.content_url()
+            retriever.retrieve(content_url)
+            image = img(src=retriever.file_location(content_url))
+            result.append(image)
+
+        elif type(content) is InstagramSidecarContent:
+            rendered_content = [TopPostsCustomerProfileHtmlGenerator._rendered_content(asset) for asset in content.content_list]
+            result.extend(rendered_content)
+
+        else:
+            raise Exception("Cannot Render Unsupported Content Type: " + str(type(content)))
+        
+
+        return result
+
+
+
 
 
 #Ref: https://www.geeksforgeeks.org/download-instagram-profile-pic-using-python/

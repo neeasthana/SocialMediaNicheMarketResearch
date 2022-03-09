@@ -64,7 +64,6 @@ class InstagramPhotoContent(InstagramContent):
 class InstagramSidecarContent(InstagramContent):
     def __init__(self, post_json):
         super().__init__(post_json)
-        self.content_list = []
 
     def _parse(self):
         super()._parse()
