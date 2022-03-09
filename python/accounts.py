@@ -1,4 +1,5 @@
 from retriever import HTMLRetriever, CachedHTMLRetriever
+from content import *
 from bs4 import BeautifulSoup
 import json
 
@@ -90,6 +91,8 @@ class InstagramAccount(Account):
         first_post = most_engaged_posts[0]
         first_post.comments
 
+        most_engaged_post = first_post
+
         print(first_post.comments)
         # For Ricky to fill in:
         # Get the most engaged upon content
@@ -150,6 +153,7 @@ class InstagramProfileInfo:
 class InstagramPost:
     def __init__(self, post_json):
         self.post_json = post_json
+        self.asset = InstagramContent.create(post_json)
         self._parsePostJson(post_json)
 
 
