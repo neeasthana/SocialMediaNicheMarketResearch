@@ -94,8 +94,8 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             slideshow_div = div(_class="slideshow-container")
             dots_div = div(style="text-align:center")
 
-            prev_button = a("&#10094;", _class="prev", onclick="plusSlides(-1)")
-            next_button = a("&#10095;", _class="next", onclick="plusSlides(1)")
+            prev_button = a("&#10094;", _class="prev", onclick="plusSlides(-1," + str(self.sidecar_count-1) +")")
+            next_button = a("&#10095;", _class="next", onclick="plusSlides(1," + str(self.sidecar_count-1) +")")
 
             for idx,content in enumerate(rendered_content):
                 slides_div = div(_class="mySlides" + str(self.sidecar_count) + " fade")
@@ -211,11 +211,12 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
 
     def _inline_javascript_for_content_couresal():
         return script("""
-            var slideIndex = [1,1];
+            var slideIndex = [4,4,4];
             /* Class the members of each slideshow group with different CSS classes */
-            var slideId = ["mySlides1", "mySlides2"]
+            var slideId = ["mySlides1", "mySlides2", "myslides3"]
             showSlides(1, 0);
             showSlides(1, 1);
+            showSlides(1, 2);
 
             function plusSlides(n, no) {
               showSlides(slideIndex[no] += n, no);
