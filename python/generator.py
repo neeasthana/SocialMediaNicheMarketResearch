@@ -131,14 +131,12 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             /* Next & previous buttons */
             .prev, .next {
               cursor: pointer;
-              position: absolute;
-              top: 50%;
               width: auto;
               margin-top: -22px;
               padding: 16px;
-              color: white;
+              color: black;
               font-weight: bold;
-              font-size: 18px;
+              font-size: 100px;
               transition: 0.6s ease;
               border-radius: 0 3px 3px 0;
               user-select: none;
