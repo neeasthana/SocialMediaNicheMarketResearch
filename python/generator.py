@@ -39,8 +39,10 @@ class HtmlGenerator:
 
 
 
+
 class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
     def __init__(self, profile: CustomerProfile):
+        self.sidecar_count = 0
         super().__init__(profile)
         _create_cache_folder()
 
@@ -60,12 +62,15 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             body.appendChild(likes)
             body.appendChild(comments)
 
-            [body.appendChild(content) for content in TopPostsCustomerProfileHtmlGenerator._rendered_content(post.asset)]
+            [body.appendChild(content) for content in self._rendered_content(post.asset)]
+
+        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
+        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_javascript_for_content_couresal())
 
         return body
 
 
-    def _rendered_content(content):
+    def _rendered_content(self, content):
         result = []
 
         if type(content) is InstagramVideoContent:
@@ -81,14 +86,154 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             result.append(image)
 
         elif type(content) is InstagramSidecarContent:
-            rendered_content = [TopPostsCustomerProfileHtmlGenerator._rendered_content(asset) for asset in content.content_list]
-            result.extend(rendered_content)
+            self.sidecar_count = self.sidecar_count + 1
+
+            rendered_content = [self._rendered_content(asset) for asset in content.content_list]
+            
+            # Reference: https://www.w3schools.com/howto/howto_js_slideshow.asp
+            slideshow_div = div(_class="slideshow-container")
+            dots_div = div(style="text-align:center")
+
+            prev_button = a("&#10094;", _class="prev", onclick="plusSlides(-1)")
+            next_button = a("&#10095;", _class="next", onclick="plusSlides(1)")
+
+            for idx,content in enumerate(rendered_content):
+                slides_div = div(_class="mySlides" + str(self.sidecar_count) + " fade")
+                slides_div.appendChild(content)
+                slideshow_div.appendChild(slides_div)
+                dots_div.appendChild(span(_class="dot", onclick="currentSlide(" + str(idx + 1) + ")"))
+
+            result.extend([slideshow_div, prev_button, next_button, dots_div])
 
         else:
             raise Exception("Cannot Render Unsupported Content Type: " + str(type(content)))
         
 
         return result
+
+
+    def _inline_css_for_content_couresal():
+        return style("""
+            * {box-sizing:border-box}
+
+            /* Slideshow container */
+            .slideshow-container {
+              max-width: 1000px;
+              position: relative;
+              margin: auto;
+            }
+
+            /* Hide the images by default */
+            .mySlides {
+              display: none;
+            }
+
+            /* Next & previous buttons */
+            .prev, .next {
+              cursor: pointer;
+              position: absolute;
+              top: 50%;
+              width: auto;
+              margin-top: -22px;
+              padding: 16px;
+              color: white;
+              font-weight: bold;
+              font-size: 18px;
+              transition: 0.6s ease;
+              border-radius: 0 3px 3px 0;
+              user-select: none;
+            }
+
+            /* Position the "next button" to the right */
+            .next {
+              right: 0;
+              border-radius: 3px 0 0 3px;
+            }
+
+            /* On hover, add a black background color with a little bit see-through */
+            .prev:hover, .next:hover {
+              background-color: rgba(0,0,0,0.8);
+            }
+
+            /* Caption text */
+            .text {
+              color: #f2f2f2;
+              font-size: 15px;
+              padding: 8px 12px;
+              position: absolute;
+              bottom: 8px;
+              width: 100%;
+              text-align: center;
+            }
+
+            /* Number text (1/3 etc) */
+            .numbertext {
+              color: #f2f2f2;
+              font-size: 12px;
+              padding: 8px 12px;
+              position: absolute;
+              top: 0;
+            }
+
+            /* The dots/bullets/indicators */
+            .dot {
+              cursor: pointer;
+              height: 15px;
+              width: 15px;
+              margin: 0 2px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+              transition: background-color 0.6s ease;
+            }
+
+            .active, .dot:hover {
+              background-color: #717171;
+            }
+
+            /* Fading animation */
+            .fade {
+              -webkit-animation-name: fade;
+              -webkit-animation-duration: 1.5s;
+              animation-name: fade;
+              animation-duration: 1.5s;
+            }
+
+            @-webkit-keyframes fade {
+              from {opacity: .4}
+              to {opacity: 1}
+            }
+
+            @keyframes fade {
+              from {opacity: .4}
+              to {opacity: 1}
+            }
+            """)
+
+
+    def _inline_javascript_for_content_couresal():
+        return script("""
+            var slideIndex = [1,1];
+            /* Class the members of each slideshow group with different CSS classes */
+            var slideId = ["mySlides1", "mySlides2"]
+            showSlides(1, 0);
+            showSlides(1, 1);
+
+            function plusSlides(n, no) {
+              showSlides(slideIndex[no] += n, no);
+            }
+
+            function showSlides(n, no) {
+              var i;
+              var x = document.getElementsByClassName(slideId[no]);
+              if (n > x.length) {slideIndex[no] = 1}
+              if (n < 1) {slideIndex[no] = x.length}
+              for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+              }
+              x[slideIndex[no]-1].style.display = "block";
+            }
+            """)
 
 
 
