@@ -66,6 +66,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
 
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_javascript_for_content_couresal())
+        body.appendChild(self._dynamic_javascript_for_content_couresal())
 
         return body
 
@@ -110,6 +111,33 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         
 
         return result
+
+
+    """
+    Should generate something like this for 3 slide couresals
+
+        ```
+            var slideIndex = [4,4,4];
+            /* Class the members of each slideshow group with different CSS classes */
+            var slideId = ["mySlides1", "mySlides2", "myslides3"]
+            showSlides(1, 0);
+            showSlides(1, 1);
+            showSlides(1, 2);
+        ```
+    """
+    def _dynamic_javascript_for_content_couresal(self):
+        slideIndex = [1] * self.sidecar_count
+        slideIndexStr = "var slideIndex = " + str(slideIndex) + ";\n"
+
+        slideIds = []
+        showSlidesString = ""
+        for idx in range(self.sidecar_count):
+            showSlidesString += "showSlides(1, " + str(idx) + ")\n"
+            slideIds.append("mySlides" + str(idx+1))
+
+        slideIdsStr = "var slideId = " + str(slideIds) + ";\n"
+
+        return script(slideIndexStr + slideIdsStr + showSlidesString)
 
 
     def _inline_css_for_content_couresal():
@@ -211,13 +239,6 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
 
     def _inline_javascript_for_content_couresal():
         return script("""
-            var slideIndex = [4,4,4];
-            /* Class the members of each slideshow group with different CSS classes */
-            var slideId = ["mySlides1", "mySlides2", "myslides3"]
-            showSlides(1, 0);
-            showSlides(1, 1);
-            showSlides(1, 2);
-
             function plusSlides(n, no) {
               showSlides(slideIndex[no] += n, no);
             }
