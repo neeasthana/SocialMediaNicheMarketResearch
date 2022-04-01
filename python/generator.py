@@ -143,7 +143,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
     def _inline_css_for_posts():
         return style("""
             .post{
-                width: 100%;
+                width: auto;
                 height: auto;
                 background: #fff;
                 border: 1px solid #dfdfdf;
@@ -189,13 +189,13 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             }
 
             .post-image{
-                width: 100%;
-                height: 500px;
+                width: auto;
+                height: auto;
                 object-fit: cover;
             }
 
             .post-content{
-                width: 100%;
+                width: auto;
                 padding: 20px;
             }
 
