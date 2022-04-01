@@ -1,6 +1,6 @@
 from domonic.html import *
 from customer import User, CustomerProfile
-from accounts import InstagramPost
+from accounts import InstagramPost, InstagramAccount
 from retriever import ContentRetriever
 from content import *
 import os
@@ -39,37 +39,25 @@ class HtmlGenerator:
 
 
 
+class InstagramPostHtmlGenerator():
+    def __init__(self, account: InstagramAccount, post: InstagramPost, body, sidecar_count):
+        self.account = account
+        self.post = post
+        self.sidecar_count = sidecar_count
+        self.html = self._append_html(body)
 
-class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
-    def __init__(self, profile: CustomerProfile):
-        self.sidecar_count = 0
-        super().__init__(profile)
-        _create_cache_folder()
 
+    def _append_html(self, body):
+        header = h2(self.account.username)
+        likes = h3("Likes: " + str(self.post.likes))
+        comments = h3("Comments: " + str(self.post.comments))
+        # image = img(src=retriever.file_location(content_url))
 
-    def get_body(self):
-        body = super().get_body()
+        body.appendChild(header)
+        body.appendChild(likes)
+        body.appendChild(comments)
 
-        most_liked_posts = [(account, account.get_most_liked_post()) for account in self.profile.follwing_accounts]
-
-        for account, post in most_liked_posts:
-            header = h2(account.username)
-            likes = h3("Likes: " + str(post.likes))
-            comments = h3("Comments: " + str(post.comments))
-            # image = img(src=retriever.file_location(content_url))
-
-            body.appendChild(header)
-            body.appendChild(likes)
-            body.appendChild(comments)
-
-            [body.appendChild(content) for content in self._rendered_content(post.asset)]
-
-        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
-        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_posts())
-        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_javascript_for_content_couresal())
-        body.appendChild(self._dynamic_javascript_for_content_couresal())
-
-        return body
+        [body.appendChild(content) for content in self._rendered_content(self.post.asset)]
 
 
     def _rendered_content(self, content):
@@ -88,8 +76,6 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
             result.append(image)
 
         elif type(content) is InstagramSidecarContent:
-            self.sidecar_count = self.sidecar_count + 1
-
             rendered_content = [self._rendered_content(asset) for asset in content.content_list]
             
             # Reference: https://www.w3schools.com/howto/howto_js_slideshow.asp
@@ -112,6 +98,36 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         
 
         return result
+
+
+
+
+
+class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
+    def __init__(self, profile: CustomerProfile):
+        self.sidecar_count = 0
+        super().__init__(profile)
+        _create_cache_folder()
+
+
+    def get_body(self):
+        body = super().get_body()
+
+        most_liked_posts = [(account, account.get_most_liked_post()) for account in self.profile.follwing_accounts]
+
+        for account, post in most_liked_posts:
+            if type(post.asset) is InstagramSidecarContent:
+                self.sidecar_count = self.sidecar_count + 1
+
+            post_html = InstagramPostHtmlGenerator(account, post, body, self.sidecar_count)
+
+        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
+        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_posts())
+        body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_javascript_for_content_couresal())
+        body.appendChild(self._dynamic_javascript_for_content_couresal())
+
+        return body
+
 
 
     """
@@ -139,6 +155,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
         slideIdsStr = "var slideId = " + str(slideIds) + ";\n"
 
         return script(slideIndexStr + slideIdsStr + showSlidesString)
+
 
     def _inline_css_for_posts():
         return style("""
