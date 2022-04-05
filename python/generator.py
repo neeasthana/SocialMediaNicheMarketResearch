@@ -65,7 +65,9 @@ class InstagramPostHtmlGenerator():
 
         post_div.appendChild(self._render_header())
 
-        post_div.appendChild(self._render_footer())
+        post_div.appendChild(self._render_like_bar())
+
+        post_div.appendChild(self._render_comments())
 
         return post_div
 
@@ -85,26 +87,24 @@ class InstagramPostHtmlGenerator():
         return info_div
 
 
-
-    def _render_footer(self):
-        return self._render_comments()
-
-
     def _render_like_bar(self):
-        """
-        <div class="post-content">
-                    <div class="reaction-wrapper">
-                        <img src="" class="icon" alt="">
-                        <img src="" class="icon" alt="">
-                        <img src="" class="icon" alt="">
-                        <img src="" class="save icon" alt="">
-                    </div>
-                    <p class="likes">108476 likes</p>
-                    <p class="description"><span>username </span> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur tenetur veritatis placeat, molestiae impedit aut provident eum quo natus molestias?</p>
-                    <p class="post-time">2 minutes ago</p>
-                </div>
-        """
-        pass
+        post_content_div = div(_class="post-content")
+
+        reaction_wrapper_div = div(_class="reaction-wrapper")
+        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="", _class="save icon", alt=""))
+        post_content_div.appendChild(reaction_wrapper_div)
+
+        post_content_div.appendChild(p(str(self.post.likes) + " likes", _class="likes"))
+
+        caption = "<span>" + self.account.username + " </span>" + str(self.post.caption)
+        post_content_div.appendChild(p(caption, _class="description"))
+
+        post_content_div.appendChild(p(str(self.post.post_time), _class="post-time"))
+
+        return post_content_div
 
 
     def _render_comments(self):
