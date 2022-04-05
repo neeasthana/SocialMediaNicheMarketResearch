@@ -69,6 +69,8 @@ class InstagramPostHtmlGenerator():
 
         post_div.appendChild(self._render_comments())
 
+        post_div.appendChild(self._rendered_content(self.post.asset))
+
         return post_div
 
 
@@ -125,13 +127,13 @@ class InstagramPostHtmlGenerator():
         if type(content) is InstagramVideoContent:
             content_url = content.content_url()
             retriever.retrieve(content_url)
-            html_video = video(type= "video/mp4", crossorigin="anonymous", src = retriever.file_location(content_url))
+            html_video = video(type= "video/mp4", crossorigin="anonymous", src = retriever.file_location(content_url), _class="post-image", alt="")
             result.append(html_video)
 
         elif type(content) is InstagramPhotoContent:
             content_url = content.content_url()
             retriever.retrieve(content_url)
-            image = img(src=retriever.file_location(content_url))
+            image = img(src=retriever.file_location(content_url), _class="post-image", alt="")
             result.append(image)
 
         elif type(content) is InstagramSidecarContent:
@@ -180,7 +182,7 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
 
             post_html = InstagramPostHtmlGenerator(account, post, body, self.sidecar_count)
 
-            print(post_html.render_html())
+            body.appendChild(post_html.render_html())
 
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_posts())
