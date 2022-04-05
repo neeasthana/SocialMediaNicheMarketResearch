@@ -207,11 +207,13 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
     def _inline_css_for_posts():
         return style("""
             .post{
-                width: auto;
+                width: 60%;
                 height: auto;
                 background: #fff;
                 border: 1px solid #dfdfdf;
-                margin-top: 40px;
+                margin-top: 60px;
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .info{
