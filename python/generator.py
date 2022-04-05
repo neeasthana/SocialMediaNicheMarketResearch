@@ -51,13 +51,66 @@ class InstagramPostHtmlGenerator():
         header = h2(self.account.username)
         likes = h3("Likes: " + str(self.post.likes))
         comments = h3("Comments: " + str(self.post.comments))
-        # image = img(src=retriever.file_location(content_url))
+        # image = img(src=retriever.file_location(content_url))info
 
         body.appendChild(header)
         body.appendChild(likes)
         body.appendChild(comments)
 
         [body.appendChild(content) for content in self._rendered_content(self.post.asset)]
+
+
+    def render_html(self):
+        post_div = div(_class="post")
+
+        info_div = div(_class="info")
+
+        user_div = div(_class="user")
+
+        profile_div = div(_class="profile-pic")
+        profile_div.appendChild(img(src="", alt=""))
+        profile_div.appendChild(p(self.account.username, _class="username"))
+
+        user_div.appendChild(profile_div)
+        info_div.appendChild(user_div)
+        post_div.appendChild(info_div)
+
+        post_div.appendChild(self._render_footer())
+
+        return post_div
+
+
+    def _render_footer(self):
+        return self._render_comments()
+
+
+    def _render_like_bar(self):
+        """
+        <div class="post-content">
+                    <div class="reaction-wrapper">
+                        <img src="" class="icon" alt="">
+                        <img src="" class="icon" alt="">
+                        <img src="" class="icon" alt="">
+                        <img src="" class="save icon" alt="">
+                    </div>
+                    <p class="likes">108476 likes</p>
+                    <p class="description"><span>username </span> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur tenetur veritatis placeat, molestiae impedit aut provident eum quo natus molestias?</p>
+                    <p class="post-time">2 minutes ago</p>
+                </div>
+        """
+        pass
+
+
+    def _render_comments(self):
+        comment_wrapper_div = div(_class="comment-wrapper")
+
+        comment_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
+        comment_wrapper_div.appendChild(input(type="text", _class="comment-box", placeholder="Add a comment"))
+        comment_wrapper_div.appendChild(button("post", _class="comment-btn"))
+
+        return comment_wrapper_div
+
+
 
 
     def _rendered_content(self, content):
@@ -120,6 +173,8 @@ class TopPostsCustomerProfileHtmlGenerator(HtmlGenerator):
                 self.sidecar_count = self.sidecar_count + 1
 
             post_html = InstagramPostHtmlGenerator(account, post, body, self.sidecar_count)
+
+            print(post_html.render_html())
 
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_content_couresal())
         body.appendChild(TopPostsCustomerProfileHtmlGenerator._inline_css_for_posts())
