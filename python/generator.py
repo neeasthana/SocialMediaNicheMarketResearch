@@ -93,10 +93,10 @@ class InstagramPostHtmlGenerator():
         post_content_div = div(_class="post-content")
 
         reaction_wrapper_div = div(_class="reaction-wrapper")
-        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
-        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
-        reaction_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
-        reaction_wrapper_div.appendChild(img(src="", _class="save icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="assets/like.PNG", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="assets/comment.PNG", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="assets/send.PNG", _class="icon", alt=""))
+        reaction_wrapper_div.appendChild(img(src="assets/save.PNG", _class="save icon", alt=""))
         post_content_div.appendChild(reaction_wrapper_div)
 
         post_content_div.appendChild(p(str(self.post.likes) + " likes", _class="likes"))
@@ -112,7 +112,7 @@ class InstagramPostHtmlGenerator():
     def _render_comments(self):
         comment_wrapper_div = div(_class="comment-wrapper")
 
-        comment_wrapper_div.appendChild(img(src="", _class="icon", alt=""))
+        comment_wrapper_div.appendChild(img(src="assets/smile.png", _class="icon", alt=""))
         comment_wrapper_div.appendChild(input(type="text", _class="comment-box", placeholder="Add a comment"))
         comment_wrapper_div.appendChild(button("post", _class="comment-btn"))
 
