@@ -63,6 +63,14 @@ class InstagramPostHtmlGenerator():
     def render_html(self):
         post_div = div(_class="post")
 
+        post_div.appendChild(self._render_header())
+
+        post_div.appendChild(self._render_footer())
+
+        return post_div
+
+
+    def _render_header(self):
         info_div = div(_class="info")
 
         user_div = div(_class="user")
@@ -73,11 +81,9 @@ class InstagramPostHtmlGenerator():
 
         user_div.appendChild(profile_div)
         info_div.appendChild(user_div)
-        post_div.appendChild(info_div)
 
-        post_div.appendChild(self._render_footer())
+        return info_div
 
-        return post_div
 
 
     def _render_footer(self):
